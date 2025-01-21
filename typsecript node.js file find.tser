@@ -1,0 +1,28 @@
+import fs from 'fs';
+import * as readline from 'readline';
+
+function delay(milliseconds: number) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+let message: string = 'Please enter your file name below:\nThe more detail the better.\n';
+let rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
+
+rl.question(message, function (answer) {
+    console.log("Thank you, the name of the file:", answer);
+
+    delay(5000).then(() => console.log('Answer will be saved'));
+    delay(5000).then(() => console.log('We will search now'));
+
+    fs.exists(answer, (exist) => {
+        if (exist) {
+            console.log("I got your file");
+        } else {
+            console.log("The file doesn't exist");
+        }
+        rl.close();
+    });
+});
