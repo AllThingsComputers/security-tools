@@ -11,25 +11,21 @@ import (
 	"net/http"
 )
 
-// Global declarations
-var port string = "5555"
-var colonPort = ":" + port
+var port string = "5555"                   // Global declaration for port
+var colonPort = ":" + port                // Port format for ListenAndServe
 var consoleMessage = "Listening on port " + port + "...\n" +
 	"Go to http://localhost" + colonPort + "/ in your web browser to access it."
 
-// Handlers
-
 // `welcome` handler for the `/page3` route
 func welcome(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Welcome to the cybersecurity page!")
+	io.WriteString(w, "Welcome to the cybersecurity page!\n")
 }
 
-// `hyperlink` handler for the `/` route
+// `hyperlink` handler for the `/` route with simulated download
 func hyperlink(w http.ResponseWriter, r *http.Request) {
-	// Responding with information and a simulated hyperlink (as plain text)
 	fmt.Fprintf(w, "Here we can use this HTTP Web Server created in Golang to run simulated threats on the port of your choice!\n")
-	fmt.Fprintf(w, "To access a sample file: C:\\Users\\User.user\\source\\repos\\51. Go series (procmon, ransom, code analyzer, QRX2, scraper, screenshot, slackbot)\\fakedownload.txt\n")
-	fmt.Fprintf(w, "Visit '/page2' or '/page3' for additional pages.")
+	fmt.Fprintf(w, "Simulated download: <a href='/download'>Fake Download Link</a>\n")
+	fmt.Fprintf(w, "Explore other pages: <a href='/page3'>Page 3</a> | <a href='/redirect'>Redirect</a>\n")
 }
 
 // `page2` handler
@@ -37,9 +33,16 @@ func page2(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "This is Page 2! Explore other pages for more simulated functionalities.")
 }
 
-// `redirect` handler for a simple HTTP redirect
+// `redirect` handler for a malicious redirect
 func redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/page3", http.StatusFound) // Redirects to `/page3`
+}
+
+// `download` handler for a simulated drive-by download
+func download(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Disposition", "attachment; filename=fakedownload.txt")
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Write([]byte("This is a simulated malicious file download. Be cautious!"))
 }
 
 // Server configuration using a ServeMux
@@ -51,6 +54,7 @@ func serverMux() {
 	mux.HandleFunc("/page2", page2)
 	mux.HandleFunc("/page3", welcome)
 	mux.HandleFunc("/redirect", redirect)
+	mux.HandleFunc("/download", download)
 
 	// Start the server
 	fmt.Println(consoleMessage)
@@ -61,5 +65,5 @@ func serverMux() {
 
 // Main function
 func main() {
-	serverMux()
+	serverMux() // Start the server
 }
